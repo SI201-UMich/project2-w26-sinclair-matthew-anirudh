@@ -1,11 +1,11 @@
-# SI 201 HW4 (Library Checkout System)
-# Your name:
-# Your student id:
-# Your email:
+# SI 201 P2
+# Your name: Matthew Huang
+# Your student id: 17382251
+# Your email: matthhua@umich.edu
 # Who or what you worked with on this homework (including generative AI like ChatGPT):
 # If you worked with generative AI also add a statement for how you used it.
 # e.g.:
-# Asked ChatGPT for hints on debugging and for suggestions on overall code structure
+# Matthew: I did not use GenAI on this assignment.
 #
 # Did your use of GenAI on this assignment align with your goals and guidelines in your Gen AI contract? If not, why?
 #
@@ -37,11 +37,13 @@ def load_listing_results(html_path) -> list[tuple]:
     Returns:
         list[tuple]: A list of tuples containing (listing_title, listing_id)
     """
-    # TODO: Implement checkout logic following the instructions
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    
+    # Open the html file for reading.
+
+
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -195,7 +197,8 @@ class TestCases(unittest.TestCase):
     def test_load_listing_results(self):
         # TODO: Check that the number of listings extracted is 18.
         # TODO: Check that the FIRST (title, id) tuple is  ("Loft in Mission District", "1944564").
-        pass
+        self.assertEqual(self.listings, 18)
+        self.assertEqual(self.listings[0], ("Loft in Mission District", "1944564"))
 
     def test_get_listing_details(self):
         html_list = ["467507", "1550913", "1944564", "4614763", "6092596"]
