@@ -42,7 +42,21 @@ def load_listing_results(html_path) -> list[tuple]:
     # ==============================
     
     # Open the html file for reading.
+    with open(html_path) as html_file:
+        soup = BeautifulSoup(html_file, "html.parser")
 
+        # Get all link tags.
+        tags = soup.find_all('div', class_="t1jojoys dir dir-ltr")
+        results = []
+        for listing in tags:
+
+            # Add id and listing title to list.
+            id = listing.get("id")
+            separator_index = id.find("_")
+            id = id[separator_index + 1:]
+            results.append((listing.text, id))
+
+    return results
 
     # ==============================
     # YOUR CODE ENDS HERE
@@ -197,7 +211,7 @@ class TestCases(unittest.TestCase):
     def test_load_listing_results(self):
         # TODO: Check that the number of listings extracted is 18.
         # TODO: Check that the FIRST (title, id) tuple is  ("Loft in Mission District", "1944564").
-        self.assertEqual(self.listings, 18)
+        self.assertEqual(len(self.listings), 18)
         self.assertEqual(self.listings[0], ("Loft in Mission District", "1944564"))
 
     def test_get_listing_details(self):
