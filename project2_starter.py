@@ -161,12 +161,23 @@ def get_listing_details(listing_id) -> dict:
 
         # Find location rating.
         rating = 0.0
-        span_tags = soup.find_all("span", class_="_12si43g")
-        if len(span_tags) > 0:
+        div_tags = soup.find_all("div", class_="_a3qxec")
+        if len(div_tags) > 0:
 
             # Get number string out of the first span tag.
             expression = r"\d\.\d"
-            rating = float(re.findall(expression, span_tags[0].text)[0])
+            for div in div_tags:
+                if re.search("Location", div.text):
+
+                    # Look for inner div, then span tag.
+                    temp_list = div.find_all("div", class_="_bgq2leu")
+                    if len(temp_list) > 0:
+                        span_list = temp_list[0]
+                        span_list = span_list.find_all("span")
+                        for span in span_list:
+                            if re.search(expression, span.text):
+                                rating = float(span.text)
+                                break
             
         inner_dict["location_rating"] = rating
 
