@@ -42,7 +42,7 @@ def load_listing_results(html_path) -> list[tuple]:
     # ==============================
     
     # Open the html file for reading.
-    with open(html_path) as html_file:
+    with open(html_path, encoding="utf-8-sig") as html_file:
         soup = BeautifulSoup(html_file, "html.parser")
 
         # Get all link tags.
@@ -89,7 +89,7 @@ def get_listing_details(listing_id) -> dict:
     # Get and open html file.
     file_path = os.path.abspath(os.path.dirname(__file__))
     file_path = os.path.join(file_path, "html_files", f"listing_{listing_id}.html")
-    with open(file_path) as listing_file:
+    with open(file_path, encoding="utf-8-sig") as listing_file:
         inner_dict = {}
         soup = BeautifulSoup(listing_file, 'html.parser')
 
@@ -119,13 +119,22 @@ def get_listing_details(listing_id) -> dict:
             inner_dict["host_type"] = "regular"
 
         # Find host name(s).
+        # hnwb2pb dir dir-ltr (class for actual host names)
+        h2_tags = soup.find_all("h2", class_="hnwb2pb dir dir-ltr")
+        for tag in h2_tags:
+
+            # Extract name.
+            expression = r"Hosted\sby\s(.+)\b"
+            name = re.findall(expression, tag.text)
+            if len(name) > 0:
+                name = name[0]
+                inner_dict["host_name"] = name
+
+        # Determine room type.
         h2_tags = soup.find_all("h2", class_="_14i3z6h")
-        for h2_tag in h2_tags:
-            tag_text = h2_tag.text
-            if tag_text.find("hosted by") >= 0:
-                separator_index = tag_text.find(";")
-                hosts = tag_text[separator_index + 1:]
-                inner_dict["host_name"] = hosts
+        for tag in h2_tags:
+            tag_text = tag.text
+            if tag_text.lower().find("hosted by") >= 0:
 
                 # Also determine room type.
                 if tag_text.lower().find("private") >= 0:
@@ -134,6 +143,21 @@ def get_listing_details(listing_id) -> dict:
                     inner_dict["room_type"] = "Shared Room"
                 else:
                     inner_dict["room_type"] = "Entire Room"
+
+        # Try again for room type if not found.
+        if inner_dict.get("roomt_type", None) is None:
+            h2_tags = soup.find_all("div", class_="_tqmy57")
+            for tag in h2_tags:
+                tag_text = tag.text
+                if tag_text.lower().find("hosted by") >= 0:
+
+                    # Also determine room type.
+                    if tag_text.lower().find("private") >= 0:
+                        inner_dict["room_type"] = "Private Room"
+                    elif tag_text.lower().find("shared") >= 0:
+                        inner_dict["room_type"] = "Shared Room"
+                    else:
+                        inner_dict["room_type"] = "Entire Room"
 
         # Find location rating.
         rating = 0.0
@@ -171,7 +195,25 @@ def create_listing_database(html_path) -> list[tuple]:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    
+    # Get listing results.
+    database_list = []
+    results_list = load_listing_results(html_path)
+
+    # Create tuple for each result.
+    for result in results_list:
+        title = result[0]
+        id = result[1]
+
+        # Get inner dictionary from get_listing_details.
+        details = get_listing_details(id)[id]
+
+        # Create and append tuple.
+        database_list.append((title, id, details["policy_number"], details["host_type"],
+                             details["host_name"], details["room_type"], details["location_rating"]))
+        
+    return database_list
+
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -281,12 +323,12 @@ class TestCases(unittest.TestCase):
     def test_get_listing_details(self):
         html_list = ["467507", "1550913", "1944564", "4614763", "6092596"]
 
-        # TODO: Call get_listing_details() on each listing id above and save results in a list.
+        # Call get_listing_details() on each listing id above and save results in a list.
         listing_details_list = []
         for id in html_list:
             listing_details_list.append(get_listing_details(id))
 
-        # TODO: Spot-check a few known values by opening the corresponding listing_<id>.html files.
+        # Spot-check a few known values by opening the corresponding listing_<id>.html files.
         # 1) Check that listing 467507 has the correct policy number "STR-0005349".
         # 2) Check that listing 1944564 has the correct host type "Superhost" and room type "Entire Room".
         # 3) Check that listing 1944564 has the correct location rating 4.9.
@@ -298,9 +340,12 @@ class TestCases(unittest.TestCase):
     def test_create_listing_database(self):
         # TODO: Check that each tuple in detailed_data has exactly 7 elements:
         # (listing_title, listing_id, policy_number, host_type, host_name, room_type, location_rating)
+        database_list = create_listing_database(self.search_results_path)
+        for listing in database_list:
+            self.assertEqual(len(listing), 7)
 
         # TODO: Spot-check the LAST tuple is ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8).
-        pass
+        self.assertEqual(database_list[-1], ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8))
 
     def test_output_csv(self):
         out_path = os.path.join(self.base_dir, "test.csv")
