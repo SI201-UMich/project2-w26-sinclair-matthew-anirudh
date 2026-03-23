@@ -248,16 +248,16 @@ def output_csv(data, filename) -> None:
     # YOUR CODE STARTS HERE
     # ==============================
 
-    sorted_data = sorted(data, key=lambda x: x[6], reverse=True)
+    data = sorted(data, key=lambda x: x[6], reverse=True)
     
     with open(filename, "w", newline="") as f:
-        writer = csv.writer(f)
+        inputer = csv.writer(f)
         # Write header row
-        writer.writerow(["Listing Title", "Listing ID", "Policy Number", 
+        inputer.writerow(["Listing Title", "Listing ID", "Policy Number", 
                          "Host Type", "Host Name", "Room Type", "Location Rating"])
         # Write each tuple as a row
-        for listing in sorted_data:
-            writer.writerow(listing)
+        for item in data:
+            inputer.writerow(item)
 
     pass
     # ==============================
@@ -282,27 +282,27 @@ def avg_location_rating_by_room_type(data) -> dict:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    totals = {}   # room_type -> sum of ratings
-    counts = {}   # room_type -> count of valid ratings
+    total = {}   
+    counter = {}  
 
     for listing in data:
         room_type = listing[5]
         location_rating = listing[6]
 
         if location_rating == 0.0:
-            continue  # exclude unrated listings
+            continue  
 
-        if room_type not in totals:
-            totals[room_type] = 0.0
-            counts[room_type] = 0
+        if room_type not in total:
+            total[room_type] = 0.0
+            counter[room_type] = 0
 
-        totals[room_type] += location_rating
-        counts[room_type] += 1
+        total[room_type] += location_rating
+        counter[room_type] += 1
 
-    # Calculate averages
+    
     averages = {}
-    for room_type in totals:
-        averages[room_type] = round(totals[room_type] / counts[room_type], 2)
+    for room_type in total:
+        averages[room_type] = round(total[room_type] / counter[room_type], 2)
 
     return averages
     # ==============================
