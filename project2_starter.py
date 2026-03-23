@@ -247,6 +247,18 @@ def output_csv(data, filename) -> None:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
+
+    sorted_data = sorted(data, key=lambda x: x[6], reverse=True)
+    
+    with open(filename, "w", newline="") as f:
+        writer = csv.writer(f)
+        # Write header row
+        writer.writerow(["Listing Title", "Listing ID", "Policy Number", 
+                         "Host Type", "Host Name", "Room Type", "Location Rating"])
+        # Write each tuple as a row
+        for listing in sorted_data:
+            writer.writerow(listing)
+
     pass
     # ==============================
     # YOUR CODE ENDS HERE
@@ -270,7 +282,29 @@ def avg_location_rating_by_room_type(data) -> dict:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    totals = {}   # room_type -> sum of ratings
+    counts = {}   # room_type -> count of valid ratings
+
+    for listing in data:
+        room_type = listing[5]
+        location_rating = listing[6]
+
+        if location_rating == 0.0:
+            continue  # exclude unrated listings
+
+        if room_type not in totals:
+            totals[room_type] = 0.0
+            counts[room_type] = 0
+
+        totals[room_type] += location_rating
+        counts[room_type] += 1
+
+    # Calculate averages
+    averages = {}
+    for room_type in totals:
+        averages[room_type] = round(totals[room_type] / counts[room_type], 2)
+
+    return averages
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
