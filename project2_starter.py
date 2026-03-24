@@ -404,28 +404,44 @@ class TestCases(unittest.TestCase):
         self.assertEqual(listing_details_list[2]["1944564"]["location_rating"], 4.9)
 
     def test_create_listing_database(self):
-        # TODO: Check that each tuple in detailed_data has exactly 7 elements:
+        # Check that each tuple in detailed_data has exactly 7 elements:
         # (listing_title, listing_id, policy_number, host_type, host_name, room_type, location_rating)
         database_list = create_listing_database(self.search_results_path)
         for listing in database_list:
             self.assertEqual(len(listing), 7)
 
-        # TODO: Spot-check the LAST tuple is ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8).
+        # Spot-check the LAST tuple is ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8).
         self.assertEqual(database_list[-1], ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8))
 
     def test_output_csv(self):
         out_path = os.path.join(self.base_dir, "test.csv")
 
-        # TODO: Call output_csv() to write the detailed_data to a CSV file.
-        # TODO: Read the CSV back in and store rows in a list.
-        # TODO: Check that the first data row matches ["Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"].
+        # Call output_csv() to write the detailed_data to a CSV file.
+        output_csv(self.detailed_data, out_path)
+
+        # Read the CSV back in and store rows in a list.
+        with open(out_path, encoding="utf-8-sig") as csv_file:
+            csv_reader = csv.reader(csv_file)
+            next(csv_reader)
+
+            # Check that the first data row matches 
+            # ["Guesthouse in San Francisco", "49591060",
+            # "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"].
+            first_data_line = next(csv_reader)
+            self.assertListEqual(first_data_line,
+                                 ["Guesthouse in San Francisco",
+                                  "49591060", "STR-0000253",
+                                  "Superhost", "Ingrid",
+                                  "Entire Room", "5.0"])
 
         os.remove(out_path)
 
     def test_avg_location_rating_by_room_type(self):
-        # TODO: Call avg_location_rating_by_room_type() and save the output.
-        # TODO: Check that the average for "Private Room" is 4.9.
-        pass
+        # Call avg_location_rating_by_room_type() and save the output.
+        avg_dict = avg_location_rating_by_room_type(self.detailed_data)
+
+        # Check that the average for "Private Room" is 4.9.
+        self.assertAlmostEqual(avg_dict["Private Room"], 4.9, 1)
 
     def test_validate_policy_numbers(self):
         # TODO: Call validate_policy_numbers() on detailed_data and 
