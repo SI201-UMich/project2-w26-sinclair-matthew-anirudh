@@ -250,7 +250,7 @@ def output_csv(data, filename) -> None:
 
     data = sorted(data, key=lambda x: x[6], reverse=True)
     
-    with open(filename, "w", newline="") as f:
+    with open(filename, "w", newline="", encoding="utf-8-sig") as f:
         inputer = csv.writer(f)
         # Write header row
         inputer.writerow(["Listing Title", "Listing ID", "Policy Number", 
@@ -325,7 +325,28 @@ def validate_policy_numbers(data) -> list[str]:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    
+    # Set index of policy_number and listing_id in tuple.
+    policy_index = 2
+    id_index = 1
+
+    # Set returned list.
+    invalid_list = []
+
+    # Loop through each tuple and add to invalid_list if they
+    # do not match the specified format.
+    expr1 = r"20\d\d-00\d{4}STR"
+    expr2 = r"STR-0{3}\d{4}"
+    for listing in data:
+        cur_policy_num = listing[policy_index]
+        if (not re.search(expr1, cur_policy_num)
+            and not re.search(expr2, cur_policy_num)
+            and not re.search("[Pp]ending", cur_policy_num)
+            and not re.search("[Ee]xempt", cur_policy_num)):
+            invalid_list.append(listing[id_index])
+
+    return invalid_list
+
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -407,8 +428,13 @@ class TestCases(unittest.TestCase):
         pass
 
     def test_validate_policy_numbers(self):
-        # TODO: Call validate_policy_numbers() on detailed_data and save the result into a variable invalid_listings.
+        # TODO: Call validate_policy_numbers() on detailed_data and 
+        # save the result into a variable invalid_listings.
+        invalid_listings = validate_policy_numbers(self.detailed_data)
+
         # TODO: Check that the list contains exactly "16204265" for this dataset.
+        self.assertEqual("16204265", invalid_listings[0])
+        self.assertEqual(len(invalid_listings), 1)
         pass
 
 
