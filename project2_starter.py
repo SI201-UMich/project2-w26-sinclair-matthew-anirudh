@@ -472,8 +472,6 @@ class TestCases(unittest.TestCase):
         self.assertEqual("16204265", invalid_listings[0])
         self.assertEqual(len(invalid_listings), 1)
         pass
-    def test_scholar(self):
-        print(google_scholar_searcher("airbnb"))
 
 
 def main():
