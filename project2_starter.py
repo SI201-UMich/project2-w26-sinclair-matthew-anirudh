@@ -2,11 +2,16 @@
 # Your name: Matthew Huang
 # Your student id: 17382251
 # Your email: matthhua@umich.edu
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Name: Sinclair Hansen
+# ID: 44136504
+# Email: sihansen@umich.edu
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Who or what you worked with on this homework (including generative AI like ChatGPT):
 # If you worked with generative AI also add a statement for how you used it.
 # e.g.:
 # Matthew: I did not use GenAI on this assignment.
-#
+# Sinclair: I did not use GenAI on this assignment.
 # Did your use of GenAI on this assignment align with your goals and guidelines in your Gen AI contract? If not, why?
 #
 # --- ARGUMENTS & EXPECTED RETURN VALUES PROVIDED --- #
