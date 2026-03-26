@@ -366,7 +366,24 @@ def google_scholar_searcher(query):
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    list_out = []
+    url = "https://scholar.google.com/scholar"
+    headers = {
+    'User-Agent': 'Chrome/105.0.0.0'
+    }
+    resp = requests.get(url, params={"q": query}, headers=headers, timeout=30) # create the soup object 
+
+    # print(resp.url)
+
+    soup = BeautifulSoup(resp.content, 'html.parser')
+
+    print(resp.content)
+
+    outer_container = soup.find('div', id='gs_bdy_ccl')
+    inner_container = outer_container.find('div', id='gs_res_ccl')
+    tags = inner_container.find_all('a') 
+    return tags
+
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -452,6 +469,8 @@ class TestCases(unittest.TestCase):
         self.assertEqual("16204265", invalid_listings[0])
         self.assertEqual(len(invalid_listings), 1)
         pass
+    def test_scholar(self):
+        print(google_scholar_searcher("airbnb"))
 
 
 def main():
