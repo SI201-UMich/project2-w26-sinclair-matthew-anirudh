@@ -377,12 +377,15 @@ def google_scholar_searcher(query):
 
     soup = BeautifulSoup(resp.content, 'html.parser')
 
-    print(resp.content)
 
     outer_container = soup.find('div', id='gs_bdy_ccl')
-    inner_container = outer_container.find('div', id='gs_res_ccl')
-    tags = inner_container.find_all('a') 
-    return tags
+    inner_container = outer_container.find('div', id='gs_res_ccl_mid')
+    article_blocks = inner_container.find_all('div', class_='gs_ri')
+
+    for tag in article_blocks:
+        title = tag.find('a')
+        list_out.append(title.text)
+    return list_out
 
     # ==============================
     # YOUR CODE ENDS HERE
