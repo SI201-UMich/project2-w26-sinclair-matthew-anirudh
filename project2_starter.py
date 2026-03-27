@@ -12,6 +12,7 @@
 # e.g.:
 # Matthew: I did not use GenAI on this assignment.
 # Sinclair: I did not use GenAI on this assignment.
+# Anirudh: I used GenAI to better understand the assignment to minimize mistakes
 # Did your use of GenAI on this assignment align with your goals and guidelines in your Gen AI contract? If not, why?
 #
 # --- ARGUMENTS & EXPECTED RETURN VALUES PROVIDED --- #
